@@ -14,7 +14,7 @@ jobs:
     - name: Run Build Core
       run: |
         cd src
-        make build COMP=mingw ARCH=x86-64-modern
+        make build COMP=mingw ARCH=x86-64-avx2
 
     - name: Upload Finished Binary Asset
       uses: actions/upload-artifact@v4
