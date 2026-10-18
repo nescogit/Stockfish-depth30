@@ -120,13 +120,18 @@ void UCIEngine::loop() {
         else if (token == "ponderhit")
             engine.set_ponderhit(false);
 
-        else if (token == "uci")
+                else if (token == "uci")
         {
+            if (!engine.get_options().count("CustomInfiniteDepth")) {
+                engine.get_options().add("CustomInfiniteDepth", Option(30, 1, 100));
+            }
+
             sync_cout << "id name " << engine_info(true) << "\n"
                       << engine.get_options() << sync_endl;
 
             sync_cout << "uciok" << sync_endl;
         }
+
 
         else if (token == "setoption")
             setoption(is);
@@ -223,12 +228,16 @@ Search::LimitsType UCIEngine::parse_limits(std::istream& is) {
             is >> limits.mate;
         else if (token == "perft")
             is >> limits.perft;
-        else if (token == "infinite")
+                else if (token == "infinite")
         {
-            limits.depth = 30;
+            // Pull whatever number you set on your Scid vs PC slider
+            int userDepth = engine.get_options()["CustomInfiniteDepth"];
+
+            limits.depth = userDepth; // Safe workaround, but now adjustable!
             limits.infinite = false;
             limits.time[WHITE] = limits.time[BLACK] = 0;
         }
+
         else if (token == "ponder")
             limits.ponderMode = true;
 
