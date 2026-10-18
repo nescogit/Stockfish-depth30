@@ -1,0 +1,23 @@
+name: Compile Windows Stockfish
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
+
+    - name: Install Windows Cross Compiler
+      run: sudo apt-get update && sudo apt-get install -y mingw-w64
+
+    - name: Run Build Core
+      run: |
+        cd src
+        make build COMP=mingw ARCH=x86-64-modern
+
+    - name: Upload Finished Binary Asset
+      uses: actions/upload-artifact@v4
+      with:
+        name: custom-stockfish-depth30
+        path: src/stockfish.exe
