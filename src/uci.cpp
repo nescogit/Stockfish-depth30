@@ -224,7 +224,11 @@ Search::LimitsType UCIEngine::parse_limits(std::istream& is) {
         else if (token == "perft")
             is >> limits.perft;
         else if (token == "infinite")
+        {
             limits.depth = 30;
+            limits.infinite = false;
+            limits.time[WHITE] = limits.time[BLACK] = 0;
+        }
         else if (token == "ponder")
             limits.ponderMode = true;
 
