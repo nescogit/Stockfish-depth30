@@ -230,12 +230,20 @@ Search::LimitsType UCIEngine::parse_limits(std::istream& is) {
             is >> limits.perft;
                 else if (token == "infinite")
         {
-            // Pull whatever number you set on your Scid vs PC slider
-            int userDepth = engine.get_options()["CustomInfiniteDepth"];
-
-            limits.depth = userDepth; // Safe workaround, but now adjustable!
-            limits.infinite = false;
-            limits.time[WHITE] = limits.time[BLACK] = 0;
+            // Only override if the user actually has the option set in the GUI
+            if (engine.get_options().count("CustomInfiniteDepth"))
+            {
+                int userDepth = engine.get_options()["CustomInfiniteDepth"];
+                
+                limits.depth = userDepth; 
+                limits.infinite = false;
+                limits.time[WHITE] = limits.time[BLACK] = 0;
+                limits.inc[WHITE]  = limits.inc[BLACK]  = 0;
+            }
+            else 
+            {
+                limits.infinite = true;
+            }
         }
 
         else if (token == "ponder")
