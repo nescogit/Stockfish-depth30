@@ -122,6 +122,10 @@ void UCIEngine::loop() {
 
         else if (token == "uci")
         {
+            if (!engine.get_options().count("CustomInfiniteDepth")) 
+			{
+                engine.get_options().add("CustomInfiniteDepth", Option(30, 1, 100));
+            }
             sync_cout << "id name " << engine_info(true) << "\n"
                       << engine.get_options() << sync_endl;
 
@@ -224,7 +228,22 @@ Search::LimitsType UCIEngine::parse_limits(std::istream& is) {
         else if (token == "perft")
             is >> limits.perft;
         else if (token == "infinite")
-            limits.infinite = 1;
+ {
+            // Only override if the user actually has the option set in the GUI
+            if (engine.get_options().count("CustomInfiniteDepth"))
+            {
+                int userDepth = engine.get_options()["CustomInfiniteDepth"];
+                
+                limits.depth = userDepth; 
+                limits.infinite = false;
+                limits.time[WHITE] = limits.time[BLACK] = 0;
+                limits.inc[WHITE]  = limits.inc[BLACK]  = 0;
+            }
+            else 
+            {
+                limits.infinite = true;
+            }
+        }
         else if (token == "ponder")
             limits.ponderMode = true;
 
